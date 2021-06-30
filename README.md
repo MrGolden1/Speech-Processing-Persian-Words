@@ -1,3 +1,4 @@
+<div dir="rtl">
 
 # <center> به نام خدا </center>
 
@@ -12,6 +13,7 @@
 
 ## <center> **تابستان 1400** </center>
 
+</div>
 
 <div dir="rtl">
 
