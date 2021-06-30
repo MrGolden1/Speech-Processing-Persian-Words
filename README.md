@@ -665,7 +665,10 @@ for item in normalized_lastname_trains_features:
 
 </div>
 
-$$ (-\infty, 0]  $$
+<!-- $$ (-\infty,0]  $$ -->
+
+![\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}](https://latex.codecogs.com/svg.latex?\Large&space;\(-\infty,0]) 
+
 
 <div dir="rtl">
 
