@@ -169,14 +169,6 @@ for i in range(train_size):
 </div>
 
 
-```python
-labels = [str(i) for i in range(train_size)]
-pretty_table = PrettyTable([''] + labels)
-for i in range(train_size):
-    pretty_table.add_row([i]+ distances_lastname_lastname[i,:].tolist())
-print(pretty_table.get_string())
-```
-
     +---+-----+---------+---------+---------+---------+---------+---------+---------+---------+---------+
     |   |  0  |    1    |    2    |    3    |    4    |    5    |    6    |    7    |    8    |    9    |
     +---+-----+---------+---------+---------+---------+---------+---------+---------+---------+---------+
@@ -217,14 +209,6 @@ for i in range(train_size):
 </div>
 
 
-
-```python
-labels = [str(i) for i in range(firstname_size)]
-pretty_table = PrettyTable([''] + labels)
-for i in range(train_size):
-    pretty_table.add_row([i]+ distances_firstname_lastname[i,:].tolist())
-print(pretty_table.get_string())
-```
 
     +---+---------+---------+---------+
     |   |    0    |    1    |    2    |
@@ -267,14 +251,6 @@ for i in range(train_size):
 
 </div>
 
-
-```python
-labels = [str(i) for i in range(lastname_another_size)]
-pretty_table = PrettyTable([''] + labels)
-for i in range(train_size):
-    pretty_table.add_row([i]+ distances_firstname_lastname_lastname_another[i,:].tolist())
-print(pretty_table.get_string())
-```
 
     +---+---------+---------+---------+
     |   |    0    |    1    |    2    |
@@ -419,13 +395,6 @@ fig.colorbar(img3, ax=[ax[2]])
 ```
 
 
-
-
-    <matplotlib.colorbar.Colorbar at 0x2901f9a5808>
-
-
-
-
 ![png](exercise_files/exercise_33_1.png)
 
 
@@ -448,8 +417,9 @@ for y, fs in lastname_tests:
     rms = librosa.feature.rms(y,frame_length=frame_length,hop_length=hop_length)
     features = np.concatenate([mfcc,mfcc_delta,mfcc_delta2,zcr,rms])
     lastname_tests_features.append(features)
-```
 
+normalized_lastname_tests_features = cmvn(lastname_tests_features,True)
+```
 
 ```python
 frame_length = int(0.05*sr)
@@ -463,25 +433,8 @@ for y, fs in firstnames:
     rms = librosa.feature.rms(y,frame_length=frame_length,hop_length=hop_length)
     features = np.concatenate([mfcc,mfcc_delta,mfcc_delta2,zcr,rms])
     firstname_features.append(features)
-```
-
-
-```python
+ 
 normalized_firstnames_features = cmvn(firstname_features,True)
-```
-
-
-```python
-
-distances_with_features_lastname = np.zeros((train_size, train_size))
-for i in range(train_size):
-    for j in range(i+1, train_size):
-        x_1 = normalized_lastname_trains_features[i]
-        x_2 = normalized_lastname_trains_features[j]
-        D, wp = librosa.sequence.dtw(x_1, x_2)
-        best_cost = D[-1, -1]
-        distances_with_features_lastname[i][j] = round(best_cost, 3)
-
 ```
 
 
@@ -497,10 +450,7 @@ for y, fs in lastname_anothers:
     rms = librosa.feature.rms(y,frame_length=frame_length,hop_length=hop_length)
     features = np.concatenate([mfcc,mfcc_delta,mfcc_delta2,zcr,rms])
     lastname_another_features.append(features)
-```
 
-
-```python
 normalized_lastname_another_features = cmvn(lastname_another_features,True)
 ```
 
@@ -512,14 +462,18 @@ normalized_lastname_another_features = cmvn(lastname_another_features,True)
 
 </div>
 
-
 ```python
-labels = [str(i) for i in range(train_size)]
-pretty_table = PrettyTable([''] + labels)
+distances_with_features_lastname = np.zeros((train_size, train_size))
 for i in range(train_size):
-    pretty_table.add_row([i]+ distances_with_features_lastname[i,:].tolist())
-print(pretty_table.get_string())
+    for j in range(i+1, train_size):
+        x_1 = normalized_lastname_trains_features[i]
+        x_2 = normalized_lastname_trains_features[j]
+        D, wp = librosa.sequence.dtw(x_1, x_2)
+        best_cost = D[-1, -1]
+        distances_with_features_lastname[i][j] = round(best_cost, 3)
+
 ```
+
 
     +---+-----+---------+---------+---------+---------+---------+---------+---------+---------+---------+
     |   |  0  |    1    |    2    |    3    |    4    |    5    |    6    |    7    |    8    |    9    |
@@ -553,16 +507,6 @@ print(pretty_table.get_string())
 </div>
 
 
-```python
-X = np.concatenate([np.transpose(item) for item in normalized_lastname_trains_features])
-n_components = 5
-lengths = np.array([item.shape[1] for item in normalized_lastname_trains_features])
-hmm_model = hmm.GaussianHMM(
-    n_components=n_components, covariance_type="full", n_iter=100)
-hmm_model.fit(X,lengths)
-
-```
-
     +---+---------+---------+---------+
     |   |    0    |    1    |    2    |
     +---+---------+---------+---------+
@@ -581,14 +525,14 @@ hmm_model.fit(X,lengths)
 
 
 ```python
-distances_with_features_firstname_lastname_lastname_another = np.zeros((train_size, lastname_another_size))
+distances_with_features_lastname_lastname_another = np.zeros((train_size, lastname_another_size))
 for i in range(train_size):
     for j in range(lastname_another_size):
         x_1 = normalized_lastname_trains_features[i]
         x_2 = normalized_lastname_another_features[j]
         D, wp = librosa.sequence.dtw(x_1, x_2)
         best_cost = D[-1, -1]
-        distances_with_features_firstname_lastname_lastname_another[i][j] = round(best_cost, 3)
+        distances_with_features_lastname_lastname_another[i][j] = round(best_cost, 3)
 ```
 
 <div dir="rtl">
@@ -646,15 +590,14 @@ print(pretty_table.get_string())
 
 
 ```python
-for item in normalized_lastname_trains_features:
-    print(hmm_model.score(np.transpose(item)))
+X = np.concatenate([np.transpose(item) for item in normalized_lastname_trains_features])
+n_components = 5
+lengths = np.array([item.shape[1] for item in normalized_lastname_trains_features])
+hmm_model = hmm.GaussianHMM(
+    n_components=n_components, covariance_type="full", n_iter=100)
+hmm_model.fit(X,lengths)
+
 ```
-
-
-
-
-    GaussianHMM(covariance_type='full', n_components=5, n_iter=100)
-
 
 
 <div dir="rtl">
@@ -671,14 +614,8 @@ for item in normalized_lastname_trains_features:
 <div dir="rtl">
 
 هر میزان که مقدار آن به صفر نزدیک تر باشد احتمال نیز بیشتر است. [اطلاعات بیشتر](https://en.wikipedia.org/wiki/Log_probability)
-
-ابتدا میزان تطابق را برای همان داده هایی که مدل با آن آموزش دیده است محاسبه میکنیم. 
 </div>
 
-
-```python
-normalized_lastname_tests_features = cmvn(lastname_tests_features,True)
-```
 
 <div dir="rtl">
 
@@ -815,14 +752,6 @@ hmm_model = hmm.GaussianHMM(
 hmm_model.fit(X, lengths)
 
 ```
-
-
-
-
-    GaussianHMM(covariance_type='full', n_components=5, n_iter=100)
-
-
-
 
 
 <div dir="rtl">
