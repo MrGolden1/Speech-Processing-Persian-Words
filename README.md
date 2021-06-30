@@ -492,19 +492,23 @@ for i in range(train_size):
 
 
 
-```python
-labels = [str(i) for i in range(firstname_size)]
-pretty_table = PrettyTable([''] + labels)
-for i in range(train_size):
-    pretty_table.add_row([i]+ distances_with_features_firstname_lastname[i,:].tolist())
-print(pretty_table.get_string())
-```
-
 <div dir="rtl">
 
 فاصله ده نام خانوادگی آموزشی با نام ها:
 
 </div>
+
+
+```python
+distances_with_features_lastname_firstname = np.zeros((train_size, lastname_another_size))
+for i in range(train_size):
+    for j in range(lastname_another_size):
+        x_1 = normalized_lastname_trains_features[i]
+        x_2 = normalized_firstnames_features[j]
+        D, wp = librosa.sequence.dtw(x_1, x_2)
+        best_cost = D[-1, -1]
+        distances_with_features_lastname_firstname[i][j] = round(best_cost, 3)
+```
 
 
     +---+---------+---------+---------+
@@ -523,6 +527,12 @@ print(pretty_table.get_string())
     +---+---------+---------+---------+
 
 
+<div dir="rtl">
+
+فاصله ده نام خانوادگی آموزشی با نام خانوادگی ضبط شده توسط گوینده ای دیگر:
+
+</div>
+
 
 ```python
 distances_with_features_lastname_lastname_another = np.zeros((train_size, lastname_another_size))
@@ -535,20 +545,6 @@ for i in range(train_size):
         distances_with_features_lastname_lastname_another[i][j] = round(best_cost, 3)
 ```
 
-<div dir="rtl">
-
-فاصله ده نام خانوادگی آموزشی با نام خانوادگی ضبط شده توسط گوینده ای دیگر:
-
-</div>
-
-
-```python
-labels = [str(i) for i in range(lastname_another_size)]
-pretty_table = PrettyTable([''] + labels)
-for i in range(train_size):
-    pretty_table.add_row([i]+ distances_with_features_firstname_lastname_lastname_another[i,:].tolist())
-print(pretty_table.get_string())
-```
 
     +---+---------+---------+---------+
     |   |    0    |    1    |    2    |
