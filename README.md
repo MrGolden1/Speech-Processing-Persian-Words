@@ -347,9 +347,8 @@ for y, fs in lastname_trains:
  x^{norm} = \frac{x - mean}{stdev} 
 ``` -->
 
- <img src="https://latex.codecogs.com/svg.latex?\Large&space;x^{norm} = \frac{x - mean}{stdev}">
 
-
+![\Large x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}](https://latex.codecogs.com/svg.latex?\Large&space;x^{norm}=\frac{x-mean}{stdev}) 
 
 ```python
 def cmvn(vecs, variance_normalization=False):
